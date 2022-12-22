@@ -12,11 +12,16 @@ const instance = axios.create({
   },
 });
 
-export default async function fetchImages(query) {
+export default async function fetchImages(query = 'cat', page = 1) {
   const response = await instance({
     params: {
       q: query,
+      page,
     },
   });
+  if (response.data.totalHits === 0) {
+    alert('No images found. Please, try another search query');
+    return [];
+  }
   return response.data.hits;
 }
