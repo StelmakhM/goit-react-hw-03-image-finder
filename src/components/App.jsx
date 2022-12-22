@@ -1,18 +1,23 @@
-import Searchbar from './Searchbar/Searchbar';
 import styles from './App.module.css';
-import fetchImages from 'services/Api';
+import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Modal from './Modal/Modal';
 import Button from './Button/Button';
+import Spinner from './Spinner/Spinner';
+import fetchImages from 'services/Api';
 
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 const INITIAL_STATE = {
   query: '',
   page: 1,
   images: [],
   showModal: false,
+  showLoadMore: false,
+  isLoading: false,
+  noResults: false,
   largeImageURL: '',
+  error: '',
 };
 
 export class App extends Component {
@@ -24,12 +29,20 @@ export class App extends Component {
     const { query, page } = this.state;
     if (prevState.query !== query || prevState.page !== page) {
       try {
-        const newImages = await fetchImages(query, page);
-        this.setState(prevState => ({
-          images: [...prevState.images, ...newImages],
+        this.setState({ isLoading: true });
+        const { hits, total } = await fetchImages(query, page);
+        if (!total) {
+          this.setState({ noResults: true });
+          return;
+        }
+        this.setState(({ images }) => ({
+          images: [...images, ...hits],
         }));
+        this.setState({ showLoadMore: page < Math.ceil(total / 12) });
       } catch (error) {
-        console.log(error);
+        this.setState({ error: error.message });
+      } finally {
+        this.setState({ isLoading: false });
       }
     }
   }
@@ -54,13 +67,33 @@ export class App extends Component {
   };
 
   render() {
-    const { images, showModal, largeImageURL } = this.state;
+    const {
+      images,
+      showModal,
+      largeImageURL,
+      isLoading,
+      error,
+      noResults,
+      query,
+      showLoadMore,
+    } = this.state;
     return (
       <div className={styles.container}>
         <Searchbar onSubmit={this.onSubmit} />
+        {noResults && (
+          <p>
+            Sorry there is nothing that matches your search <b>{query}</b>
+          </p>
+        )}
         <ImageGallery images={images} showModal={this.showModal} />
         {showModal && <Modal url={largeImageURL} hideModal={this.hideModal} />}
-        {images.length > 0 && <Button loadMore={this.loadMore} />}
+        {showLoadMore && <Button loadMore={this.loadMore} />}
+        {isLoading && <Spinner />}
+        {error && (
+          <p>
+            Sorry, an unexpected error occurred: <b>{error}</b>
+          </p>
+        )}
       </div>
     );
   }

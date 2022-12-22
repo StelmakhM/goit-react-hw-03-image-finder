@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import styles from './Button.module.css';
 
 export default function Button({ loadMore }) {
@@ -8,3 +8,7 @@ export default function Button({ loadMore }) {
     </button>
   );
 }
+
+Button.propTypes = {
+  loadMore: PropTypes.func.isRequired,
+};

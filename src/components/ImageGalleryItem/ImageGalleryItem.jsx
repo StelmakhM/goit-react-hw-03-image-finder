@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import styles from './ImageGalleryItem.module.css';
 
@@ -6,15 +7,24 @@ export default function ImageGalleryItem({
   largeImageURL,
   showModal,
 }) {
+  const openModal = e => {
+    showModal(e);
+  };
   return (
     <li className={styles.imageGalleryItem}>
       <img
         className={styles.imageGalleryItemImage}
         src={webformatURL}
-        alt="Image"
+        alt="Some pic"
         data-url={largeImageURL}
-        onClick={e => showModal(e)}
+        onClick={openModal}
       />
     </li>
   );
 }
+
+ImageGalleryItem.propTypes = {
+  largeImageURL: PropTypes.PropTypes.string.isRequired,
+  showModal: PropTypes.func.isRequired,
+  webformatURL: PropTypes.PropTypes.string.isRequired,
+};

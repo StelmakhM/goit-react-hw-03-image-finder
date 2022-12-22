@@ -19,9 +19,6 @@ export default async function fetchImages(query = 'cat', page = 1) {
       page,
     },
   });
-  if (response.data.totalHits === 0) {
-    alert('No images found. Please, try another search query');
-    return [];
-  }
-  return response.data.hits;
+  console.log(response.data);
+  return response.data;
 }

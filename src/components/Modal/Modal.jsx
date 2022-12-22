@@ -1,5 +1,6 @@
+import PropTypes from 'prop-types';
 import styles from './Modal.module.css';
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 export default class Modal extends Component {
   hideModal = e => {
@@ -9,7 +10,7 @@ export default class Modal extends Component {
   };
 
   onBackdropClick = e => {
-    if (e.currentTarget != e.target) {
+    if (e.currentTarget !== e.target) {
       return;
     }
     this.props.hideModal();
@@ -28,9 +29,14 @@ export default class Modal extends Component {
     return (
       <div onClick={this.onBackdropClick} className={styles.overlay}>
         <div className={styles.modal}>
-          <img src={url} alt="Image" width="900" />
+          <img src={url} alt="Some pic" width="800" />
         </div>
       </div>
     );
   }
 }
+
+Modal.propTypes = {
+  hideModal: PropTypes.func.isRequired,
+  url: PropTypes.string.isRequired,
+};
