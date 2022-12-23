@@ -37,8 +37,8 @@ export class App extends Component {
         }
         this.setState(({ images }) => ({
           images: [...images, ...hits],
+          showLoadMore: page < Math.ceil(total / 12),
         }));
-        this.setState({ showLoadMore: page < Math.ceil(total / 12) });
       } catch (error) {
         this.setState({ error: error.message });
       } finally {
